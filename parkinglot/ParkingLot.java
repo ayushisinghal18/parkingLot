@@ -33,7 +33,7 @@ public class ParkingLot {
 			return -1;
 		}
 
-		Parkspot parkSpot = checkVacantSpot(vehicle);
+		Parkspot parkSpot = checkSpot(vehicle);
 		if (parkSpot == null) {
 			System.out.println("Parking for " + VehicleSize.getVehicleType(vehicle.getSize()) + " vehicle is FULL");
 			return -1;
@@ -52,7 +52,7 @@ public class ParkingLot {
 	// removes vehicle from parking spot
 	public int removeVehicle(int levelno, int spotNo) {
 
-		Parkspot parkSpot = checkOccupiedSpot(levelno, spotNo);
+		Parkspot parkSpot = checkSpot(levelno, spotNo);
 		if (parkSpot == null) {
 			System.out.println("Parking Spot already free");
 			return -1;
@@ -69,7 +69,7 @@ public class ParkingLot {
 	}
 
 	// checks vacant spot
-	private Parkspot checkVacantSpot(Vehicle vehicle) {
+	private Parkspot checkSpot(Vehicle vehicle) {
 		Parkspot parkspot = null;
 		for (Level level : levels) {
 			parkspot = level.getVacantParkingSpot(vehicle.getSize());
@@ -81,7 +81,7 @@ public class ParkingLot {
 	}
 
 	// checks occupied spot
-	private Parkspot checkOccupiedSpot(int levelno, int spotNo) {
+	private Parkspot checkSpot(int levelno, int spotNo) {
 		Parkspot parkspot = null;
 
 		parkspot = levels.get(levelno).getOccupiedParkingSpot(spotNo);

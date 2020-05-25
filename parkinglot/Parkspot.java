@@ -19,12 +19,12 @@ public class Parkspot {
 		return isVacant;
 	}
 
-	public void spotOccupied(Vehicle vehicle) {
+	public void addVehicle(Vehicle vehicle) {
 		this.isVacant = false;
 		this.vehicle = vehicle;
 	}
 
-	public void vacantSpot() {
+	public void removeVehicle() {
 		this.isVacant = true;
 		this.vehicle = null;
 	}

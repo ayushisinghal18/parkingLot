@@ -7,6 +7,5 @@ public class Bike extends Vehicle {
 
 	public Bike() {
 		this.setSize(VehicleSize.SMALL.getSize());
-		// this.setSpotsNeeded(1);
 	}
 }

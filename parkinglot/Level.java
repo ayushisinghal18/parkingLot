@@ -42,11 +42,11 @@ public class Level {
 	}
 
 	public void addVehicle(int spotNo, Vehicle vehicle) {
-		parkspots.get(spotNo).spotOccupied(vehicle);
+		parkspots.get(spotNo).addVehicle(vehicle);
 	}
 
 	public void removeVehicle(int spotNo) {
-		parkspots.get(spotNo).vacantSpot();
+		parkspots.get(spotNo).removeVehicle();
 	}
 
 	public List<Parkspot> getParkingSpot() {

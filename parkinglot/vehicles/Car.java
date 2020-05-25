@@ -7,6 +7,5 @@ public class Car extends Vehicle {
 
 	public Car() {
 		this.setSize(VehicleSize.MEDIUM.getSize());
-		// this.setSpotsNeeded(2);
 	}
 }

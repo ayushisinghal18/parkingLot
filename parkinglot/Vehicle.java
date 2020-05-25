@@ -3,7 +3,6 @@ package parkinglot;
 public class Vehicle {
 	private int size;
 	private int spot;
-	// private int spotsNeeded;
 	private String vehicleNo;
 
 	public Vehicle() {
@@ -29,13 +28,6 @@ public class Vehicle {
 	public void setSpot(int spot) {
 		this.spot = spot;
 	}
-
-	/*
-	 * public int getSpotsNeeded() { return spotsNeeded; }
-	 * 
-	 * public void setSpotsNeeded(int spotsNeeded) { this.spotsNeeded = spotsNeeded;
-	 * }
-	 */
 
 	public String getVehicleNo() {
 		return vehicleNo;

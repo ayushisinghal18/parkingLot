@@ -7,6 +7,5 @@ public class Truck extends Vehicle {
 
 	public Truck() {
 		this.setSize(VehicleSize.BIG.getSize());
-		// this.setSpotsNeeded(3);
 	}
 }
