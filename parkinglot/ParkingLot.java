@@ -1,115 +1,212 @@
 package parkinglot;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+
+import parkinglot.enums.VehicleType;
 
 public class ParkingLot {
 
 	public static ParkingLot lot = null;
 
-	private List<Level> levels;
-	private Display mainDisplay;
+	private HashMap<Integer, ParkingFloor> floors;
+	private int id;
+	private int freeBikeSpotCount;
+	private int freeCompactSpotCount;
+	private int freeBigSpotCount;
 
-	// initializes parking lot and levels
-	private ParkingLot(int level, int parkingSpots) {
-		levels = new ArrayList<Level>(level);
-		for (int i = 0; i < level; i++) {
-			levels.add(new Level(i, parkingSpots));
-			mainDisplay = new Display();
-		}
+	private final int maxBikeSpots;
+	private final int maxCompactSpots;
+	private final int maxBigSpots;
+
+	private static int ticketNumber;
+	private ParkingDisplayBoard displayBoard;
+
+	// initializes parking lot and floors
+	private ParkingLot(int id) {
+		this.id = id;
+
+		floors = new HashMap<>();
+
+		maxBikeSpots = 10;
+		maxCompactSpots = 10;
+		maxBigSpots = 10;
+
+		ticketNumber = 1;
+
+		displayBoard = new ParkingDisplayBoard(id);
 	}
 
-	public static ParkingLot getInstance(int level, int parkingSpots) {
+	public static ParkingLot getInstance() {
 		if (lot == null) {
-			lot = new ParkingLot(level, parkingSpots);
+			lot = new ParkingLot(0000);
 		}
 		return lot;
 	}
 
-	// allocate parking spot to vehicle
-	public int allocateParkingSpot(Vehicle vehicle) {
-		if (VehicleSize.checkSize(vehicle.getSize()) == null) {
-			System.out.println("Vehicle not allowed");
-			return -1;
+	public ParkingTicket getNewParkingTicket(Vehicle vehicle) {
+		if (VehicleType.isValidVehicle(vehicle.getType()) == null) {
+			System.out.println("Invalid Vehicle Type!");
+			return null;
 		}
 
-		Parkspot parkSpot = checkSpot(vehicle);
-		if (parkSpot == null) {
-			System.out.println("Parking for " + VehicleSize.getVehicleType(vehicle.getSize()) + " vehicle is FULL");
-			return -1;
-		}
+		ParkingTicket ticket = new ParkingTicket(ticketNumber++);
+		vehicle.addTicket(ticket);
 
-		levels.get(parkSpot.getLevelNo()).addVehicle(parkSpot.getSpotNo(), vehicle);
+		updateSpotCountAfterAddingVehicle(vehicle.getType());
 
-		System.out.println("Display board for each level");
-		for (Level level : levels) {
-			level.show(level);
-		}
-
-		return parkSpot.getSpotNo();
+		return ticket;
 	}
 
-	// removes vehicle from parking spot
-	public int removeVehicle(int levelno, int spotNo) {
-
-		Parkspot parkSpot = checkSpot(levelno, spotNo);
-		if (parkSpot == null) {
-			System.out.println("Parking Spot already free");
-			return -1;
-		}
-
-		levels.get(parkSpot.getLevelNo()).removeVehicle(spotNo);
-
-		System.out.println("Display board for each level");
-		for (Level level : levels) {
-			level.show(level);
-		}
-
-		return parkSpot.getSpotNo();
+	public boolean addParkingFloor(ParkingFloor floor) {
+		return floors.put(floor.getFloorNo(), floor) != null;
 	}
 
-	// checks vacant spot
-	private Parkspot checkSpot(Vehicle vehicle) {
-		Parkspot parkspot = null;
-		for (Level level : levels) {
-			parkspot = level.getVacantParkingSpot(vehicle.getSize());
-			if (parkspot != null) {
+	public boolean addParkingSpot(int floor, ParkingSpot spot) {
+		boolean added = floors.get(floor).addParkingSpot(spot);
+		if (added) {
+			switch (spot.getType()) {
+			case BIKE:
+				freeBikeSpotCount++;
+				break;
+			case COMPACT:
+				freeCompactSpotCount++;
+				break;
+			case BIG:
+				freeBigSpotCount++;
 				break;
 			}
 		}
-		return parkspot;
+		return added;
 	}
 
-	// checks occupied spot
-	private Parkspot checkSpot(int levelno, int spotNo) {
-		Parkspot parkspot = null;
-
-		parkspot = levels.get(levelno).getOccupiedParkingSpot(spotNo);
-
-		return parkspot;
+	public Object getParkingFloor(String floor) {
+		return null;
 	}
 
-	// display vacant spots
-	public void displaySpots() {
-		System.out.println("-------------------------------------------------");
-		for (Level level : levels) {
-			System.out.println(mainDisplay.show(level));
+	public boolean removeParkingFloor(int floorNo) {
+
+		if (floors.containsKey(floorNo) && floors.get(floorNo)
+				.getVacantParkingSpotCount() == (freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount)) {
+			return floors.remove(floorNo) != null;
 		}
-		System.out.println("-------------------------------------------------");
+		return false;
 	}
 
-	// checks if atleast one spot is vacant in parking lot
-	public boolean checkParkingSpotVacany() {
+	public boolean removeParkingSpot(int floor, int spotNo) {
+		ParkingSpot removedSpot = floors.get(floor).removeParkingSpot(spotNo);
+		if (removedSpot != null) {
+			switch (removedSpot.getType()) {
+			case BIKE:
+				freeBikeSpotCount--;
+				return true;
+			case COMPACT:
+				freeCompactSpotCount--;
+				return true;
+			case BIG:
+				freeBigSpotCount--;
+				return true;
+			}
+		}
+		return false;
+	}
 
-		for (Level level : levels) {
-			if (level.getVacantParkingSpot(VehicleSize.SMALL.getSize()) != null)
-				return true;
-			if (level.getVacantParkingSpot(VehicleSize.MEDIUM.getSize()) != null)
-				return true;
-			if (level.getVacantParkingSpot(VehicleSize.BIG.getSize()) != null)
-				return true;
+	public int getFloorsCount() {
+		return floors.size();
+	}
+
+	public ParkingFloor getFloor(int floor) {
+		return floors.get(floor);
+	}
+
+	public boolean isParkingFull() {
+		int freeSpots = freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount;
+		int totalSpot = maxBikeSpots + maxCompactSpots + maxBigSpots;
+
+		return freeSpots == totalSpot;
+	}
+
+	public boolean displayBoardforFullParking() {
+		if (floors.size() == 0 || (freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount) == 0) {
+			displayBoard.displayParkingFullMessage();
+			return true;
+		}
+
+		for (Map.Entry<Integer, ParkingFloor> floor : floors.entrySet()) {
+			System.out.println("\n-----------------DISPLAY BOARD-----------------");
+			System.out.println("*** Floor " + floor.getKey() + " ***");
+			floor.getValue().getDisplayBoard().displayVacantSpots();
+			System.out.println("-----------------------------------------------");
 		}
 
 		return false;
+	}
+
+	public boolean assignVehicleToSpot(Vehicle vehicle) {
+		ParkingSpot spot = null;
+
+		for (Map.Entry<Integer, ParkingFloor> floor : floors.entrySet()) {
+			spot = floor.getValue().assignVehicleToSpot(vehicle);
+			if (spot != null) {
+				System.out.println("Vehicle " + vehicle.getVehicleNumber() + " parked at spot " + spot.getSpotNumber()
+						+ " on Floor " + floor.getValue().getFloorNo());
+				getNewParkingTicket(vehicle);
+				return true;
+			}
+		}
+
+		System.out.println("Vehicle " + vehicle.getVehicleNumber() + " cannot be parked at spot");
+		return false;
+	}
+
+	public boolean removeVehicleFromSpot(int spotNo, String vehicleNumber) {
+		ParkingSpot spot = null;
+
+		for (Map.Entry<Integer, ParkingFloor> floor : floors.entrySet()) {
+			spot = floor.getValue().removeVehicleFromSpot(spotNo, vehicleNumber);
+			if (spot != null) {
+				updateSpotCountAfterRemovingVehicle(spot.getVehicle().getType());
+				spot.removeVehicle();
+				System.out.println("Vehicle " + vehicleNumber + " removed from spot " + spotNo);
+				return true;
+			}
+		}
+		System.out.println("Vehicle " + vehicleNumber + " not parked at spot " + spotNo);
+		return false;
+
+	}
+
+	public boolean diplayParkingFull() {
+		int freeSpots = freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount;
+		if (freeSpots == 0) {
+			displayBoard.displayParkingFullMessage();
+			return true;
+		}
+
+		return false;
+	}
+
+	private void updateSpotCountAfterRemovingVehicle(VehicleType type) {
+		if (type == VehicleType.BIKE) {
+			freeBikeSpotCount++;
+		}
+		if (type == VehicleType.CAR) {
+			freeCompactSpotCount++;
+		}
+		if (type == VehicleType.TRUCK || type == VehicleType.VAN) {
+			freeCompactSpotCount++;
+		}
+	}
+
+	private void updateSpotCountAfterAddingVehicle(VehicleType type) {
+		if (type == VehicleType.BIKE) {
+			freeBikeSpotCount--;
+		}
+		if (type == VehicleType.CAR) {
+			freeCompactSpotCount--;
+		}
+		if (type == VehicleType.TRUCK || type == VehicleType.VAN) {
+			freeCompactSpotCount--;
+		}
 	}
 }

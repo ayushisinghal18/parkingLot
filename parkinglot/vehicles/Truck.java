@@ -1,11 +1,11 @@
 package parkinglot.vehicles;
 
 import parkinglot.Vehicle;
-import parkinglot.VehicleSize;
+import parkinglot.enums.VehicleType;
 
 public class Truck extends Vehicle {
 
 	public Truck() {
-		this.setSize(VehicleSize.BIG.getSize());
+		super(VehicleType.TRUCK);
 	}
 }

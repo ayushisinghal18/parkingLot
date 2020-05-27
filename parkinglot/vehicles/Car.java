@@ -1,11 +1,11 @@
 package parkinglot.vehicles;
 
 import parkinglot.Vehicle;
-import parkinglot.VehicleSize;
+import parkinglot.enums.VehicleType;
 
 public class Car extends Vehicle {
 
 	public Car() {
-		this.setSize(VehicleSize.MEDIUM.getSize());
+		super(VehicleType.CAR);
 	}
 }

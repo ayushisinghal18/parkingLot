@@ -1,39 +1,43 @@
 package parkinglot;
 
-public class Vehicle {
-	private int size;
-	private int spot;
-	private String vehicleNo;
+import parkinglot.enums.VehicleType;
 
-	public Vehicle() {
+public abstract class Vehicle {
+
+	private String vehicleNumber;
+	private VehicleType type;
+	private ParkingTicket ticket;
+
+	public Vehicle(VehicleType type) {
+		this.type = type;
 	}
 
-	public Vehicle(int size, String vehicleNo) {
-		this.size = size;
-		this.vehicleNo = vehicleNo;
+	public String getVehicleNumber() {
+		return vehicleNumber;
 	}
 
-	public int getSize() {
-		return size;
+	public void setVehicleNumber(String vehicleNumber) {
+		this.vehicleNumber = vehicleNumber;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
+	public VehicleType getType() {
+		return type;
 	}
 
-	public int getSpot() {
-		return spot;
+	public void setType(VehicleType type) {
+		this.type = type;
 	}
 
-	public void setSpot(int spot) {
-		this.spot = spot;
+	public void addTicket(ParkingTicket ticket) {
+		this.ticket = ticket;
 	}
 
-	public String getVehicleNo() {
-		return vehicleNo;
+	public ParkingTicket getTicket() {
+		return ticket;
 	}
 
-	public void setVehicleNo(String vehicleNo) {
-		this.vehicleNo = vehicleNo;
+	public void setTicket(ParkingTicket ticket) {
+		this.ticket = ticket;
 	}
+
 }

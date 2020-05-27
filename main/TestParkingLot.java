@@ -2,9 +2,18 @@ package main;
 
 import java.util.Scanner;
 
+import parkinglot.ParkingFloor;
 import parkinglot.ParkingLot;
+import parkinglot.ParkingSpot;
 import parkinglot.Vehicle;
-import parkinglot.VehicleSize;
+import parkinglot.actors.Admin;
+import parkinglot.parkingspots.BigSpot;
+import parkinglot.parkingspots.BikeSpot;
+import parkinglot.parkingspots.CompactSpot;
+import parkinglot.vehicles.Bike;
+import parkinglot.vehicles.Car;
+import parkinglot.vehicles.Truck;
+import parkinglot.vehicles.Van;
 
 public class TestParkingLot {
 
@@ -12,74 +21,160 @@ public class TestParkingLot {
 
 		Scanner scan = new Scanner(System.in);
 
-		System.out.println("Enter levels: ");
-		int levels = scan.nextInt();
-		System.out.println("Enter parking spots: ");
-		int parkingSpots = scan.nextInt();
+		// Singleton Pattern
+		ParkingLot lot = ParkingLot.getInstance();
+		Admin admin = Admin.getInstance();
 
-		//Singleton Pattern
-		ParkingLot lot = ParkingLot.getInstance(levels, parkingSpots);
-
+		performAdminActions(admin, scan);
 		startParking(lot, scan);
 	}
 
+	private static void performAdminActions(Admin admin, Scanner scan) {
+		System.out.println("Hello Admin!");
+		boolean buildSystem = true;
+
+		int spotNo = 0;
+		int floorNo = 0;
+
+		while (buildSystem) {
+			System.out.println("Please provide input: " + "\n 1-> Add Floor. \n 2-> Add Parking Spot. "
+					+ "\n 3-> Remove Floor. \n 4-> Remove Parking Spot.");
+			int input = scan.nextInt();
+
+			switch (input) {
+			case 1:
+				floorNo++;
+				addFloor(scan, admin, floorNo);
+				System.out.println("Add Parking Spot: ");
+				break;
+			case 2:
+				spotNo++;
+				addParkingSpot(scan, admin, spotNo);
+				break;
+			case 3:
+				removeFloor(scan, admin);
+				break;
+			case 4:
+				removeParkingSpot(scan, admin);
+				break;
+			default:
+				System.out.println("Invalid input!");
+				break;
+			}
+
+			System.out.println("Want to continue building the system? (Y/N)?");
+			String adminInput = scan.next();
+			if (adminInput.equalsIgnoreCase("y")) {
+				buildSystem = true;
+			} else {
+				buildSystem = false;
+			}
+		}
+	}
+
+	private static void addFloor(Scanner scan, Admin admin, int floorNo) {
+		ParkingFloor floor = new ParkingFloor(floorNo);
+		admin.addParkingFloor(floor);
+	}
+
+	private static void removeFloor(Scanner scan, Admin admin) {
+		System.out.println("Enter Floor number: ");
+		int floorNo = scan.nextInt();
+		admin.removeParkingFloor(floorNo);
+	}
+
+	private static void addParkingSpot(Scanner scan, Admin admin, int spotNo) {
+		System.out.println("Enter floor number: ");
+		int floorNo = scan.nextInt();
+
+		System.out.println("Enter Spot type: " + "\n 1-> Bike. " + "\n 2-> Compact. " + "\n 3-> Big ");
+		int spotType = scan.nextInt();
+		ParkingSpot spot = null;
+
+		switch (spotType) {
+		case 1:
+			spot = new BikeSpot(spotNo);
+			break;
+		case 2:
+			spot = new CompactSpot(spotNo);
+			break;
+		case 3:
+			spot = new BigSpot(spotNo);
+			break;
+		default:
+			System.out.println("Invalid input!");
+			break;
+		}
+
+		admin.addParkingSpot(floorNo, spot);
+	}
+
+	private static void removeParkingSpot(Scanner scan, Admin admin) {
+		System.out.println("Enter floor number: ");
+		int floorNo = scan.nextInt();
+
+		System.out.println("Enter Spot number: ");
+		int spotNo = scan.nextInt();
+
+		admin.removeParkingSpot(floorNo, spotNo);
+	}
+
 	private static void startParking(ParkingLot lot, Scanner scan) {
-		boolean isParkingSpotVacant = true;
-		boolean changeInSpotState = false;
-
 		System.out.println("Welcome to Parking Lot..");
-		System.out.println("\n -*-*-Main Display Board -*-*-");
-		lot.displaySpots();
 
-		while (isParkingSpotVacant) {
-			System.out.println("Please choose one: \n "
-					+ "1-> Park. \n 2-> Exit ");
+		boolean isParkingFull = lot.displayBoardforFullParking();
+		if (isParkingFull)
+			return;
+
+		while (true) {
+			System.out.println("\nPlease choose one: " + "\n 1-> Park. " + "\n 2-> Exit ");
 			int action = scan.nextInt();
 			switch (action) {
 			case 1: // alot a parking spot
-				System.out.println("Enter vehicle size: \n "
-						+ "1-> SMALL. \n 2-> MEDIUM. \n 3-> BIG");
-				int vehicleSize = scan.nextInt();
-				System.out.println("Enter vehicle no: ");
-				String vehicleNo = scan.next();
+				boolean isParkingSpotVacant = lot.diplayParkingFull();
+				if (!isParkingSpotVacant) {
+					System.out.println("Enter vehicle type: " + "\n 1-> BIKE. " + "\n 2-> CAR. " + "\n 3-> TRUCK. "
+							+ "\n 3-> VAN");
+					int vehicleType = scan.nextInt();
+					Vehicle vehicle = null;
+					switch (vehicleType) {
+					case 1:
+						vehicle = new Bike();
+						break;
+					case 2:
+						vehicle = new Car();
+						break;
+					case 3:
+						vehicle = new Truck();
+						break;
+					case 4:
+						vehicle = new Van();
+						break;
+					default:
+						System.out.println("Invalid input!");
+						break;
+					}
 
-				Vehicle vehicle = new Vehicle(vehicleSize, vehicleNo);
+					System.out.println("Enter vehicle number: ");
+					String vehicleNo = scan.next();
+					vehicle.setVehicleNumber(vehicleNo);
 
-				int spotNo = lot.allocateParkingSpot(vehicle);
-				if (spotNo > -1) {
-					System.out.println("Vehicle Parked at spot " + spotNo);
-					changeInSpotState = true;
-				} else {
-					changeInSpotState = false;
+					lot.assignVehicleToSpot(vehicle);
 				}
 				break;
 			case 2: // remove vehicle from parking spot
-				System.out.println("Enter level no:");
-				int levelNo = scan.nextInt();
 				System.out.println("Enter Parking spot no:");
-				int vacantSpotNo = scan.nextInt();
-				vacantSpotNo = lot.removeVehicle(levelNo, vacantSpotNo);
-				if (vacantSpotNo > -1) {
-					System.out.println("Vehicle removed from spot " + vacantSpotNo);
-					changeInSpotState = true;
-				} else {
-					changeInSpotState = false;
-				}
+				int spotNo = scan.nextInt();
+				System.out.println("Enter vehicle number: ");
+				String vehicleNumber = scan.next();
+
+				lot.removeVehicleFromSpot(spotNo, vehicleNumber);
 				break;
 
 			default:
 				System.out.println("Invalid operation!");
-				changeInSpotState = false;
 				break;
 			}
-			if (changeInSpotState) {
-				System.out.println("\n -*-*-Main Display Board -*-*-");
-				lot.displaySpots();
-			}
-
-			isParkingSpotVacant = lot.checkParkingSpotVacany();
 		}
-
-		System.out.println("\n .....Parking is full.....");
 	}
 }
