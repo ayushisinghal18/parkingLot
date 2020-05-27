@@ -12,6 +12,7 @@ public class Payment {
 
 	private String message;
 
+	// calculates rate for x hours for parking spot at exit
 	public void initTransaction(ParkingTicket ticket, ParkingSpotType type) {
 		Date paidAt = new Date();
 		int hours = 0;

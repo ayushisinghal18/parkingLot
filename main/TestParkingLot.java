@@ -26,9 +26,11 @@ public class TestParkingLot {
 		Admin admin = Admin.getInstance();
 
 		performAdminActions(admin, scan);
+
 		startParking(lot, scan);
 	}
 
+	// admin actions -> add/ remove parking lot/ floor
 	private static void performAdminActions(Admin admin, Scanner scan) {
 		System.out.println("Hello Admin!");
 		boolean buildSystem = true;
@@ -42,19 +44,19 @@ public class TestParkingLot {
 			int input = scan.nextInt();
 
 			switch (input) {
-			case 1:
+			case 1: // add floor
 				floorNo++;
 				addFloor(scan, admin, floorNo);
 				System.out.println("Add Parking Spot: ");
 				break;
-			case 2:
+			case 2: // add Parking spot
 				spotNo++;
 				addParkingSpot(scan, admin, spotNo);
 				break;
-			case 3:
+			case 3: // remove floor
 				removeFloor(scan, admin);
 				break;
-			case 4:
+			case 4:// remove parking spot
 				removeParkingSpot(scan, admin);
 				break;
 			default:
@@ -119,6 +121,7 @@ public class TestParkingLot {
 		admin.removeParkingSpot(floorNo, spotNo);
 	}
 
+	// parking lot -> park or remove vehicle
 	private static void startParking(ParkingLot lot, Scanner scan) {
 		System.out.println("Welcome to Parking Lot..");
 

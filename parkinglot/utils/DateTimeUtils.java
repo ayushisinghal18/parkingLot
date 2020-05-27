@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class DateTimeUtils {
 
+	// calculates how much time a vehicle was parked for
 	public static int parseDateIntoTime(Date issuedAt, Date paidAt) throws ParseException {
 		String format = "dd/MM/yyyy HH:mm:ss";
 		SimpleDateFormat sdf = new SimpleDateFormat(format);

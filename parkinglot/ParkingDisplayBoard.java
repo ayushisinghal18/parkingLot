@@ -54,10 +54,12 @@ public class ParkingDisplayBoard {
 		displayMessage(this.message);
 	}
 
+	// display board
 	private void displayMessage(String message) {
 		System.out.println(message);
 	}
 
+	// display board when parking is full
 	public void displayParkingFullMessage() {
 		System.out.println("Sorry, Parking is Full!");
 	}

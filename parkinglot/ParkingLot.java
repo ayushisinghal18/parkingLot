@@ -44,6 +44,7 @@ public class ParkingLot {
 		return lot;
 	}
 
+	// get parking ticket for new vehicle and assign to it
 	public ParkingTicket getNewParkingTicket(Vehicle vehicle) {
 		if (VehicleType.isValidVehicle(vehicle.getType()) == null) {
 			System.out.println("Invalid Vehicle Type!");
@@ -58,10 +59,12 @@ public class ParkingLot {
 		return ticket;
 	}
 
+	// add new parking floor
 	public boolean addParkingFloor(ParkingFloor floor) {
 		return floors.put(floor.getFloorNo(), floor) != null;
 	}
 
+	// add new parking spot
 	public boolean addParkingSpot(int floor, ParkingSpot spot) {
 		boolean added = floors.get(floor).addParkingSpot(spot);
 		if (added) {
@@ -80,10 +83,7 @@ public class ParkingLot {
 		return added;
 	}
 
-	public Object getParkingFloor(String floor) {
-		return null;
-	}
-
+	// remove parking floor
 	public boolean removeParkingFloor(int floorNo) {
 
 		if (floors.containsKey(floorNo) && floors.get(floorNo)
@@ -93,6 +93,7 @@ public class ParkingLot {
 		return false;
 	}
 
+	// remove parking spot
 	public boolean removeParkingSpot(int floor, int spotNo) {
 		ParkingSpot removedSpot = floors.get(floor).removeParkingSpot(spotNo);
 		if (removedSpot != null) {
@@ -119,6 +120,7 @@ public class ParkingLot {
 		return floors.get(floor);
 	}
 
+	// checks if parking is full
 	public boolean isParkingFull() {
 		int freeSpots = freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount;
 		int totalSpot = maxBikeSpots + maxCompactSpots + maxBigSpots;
@@ -126,6 +128,7 @@ public class ParkingLot {
 		return freeSpots == totalSpot;
 	}
 
+	// displays parking full message on display board
 	public boolean displayBoardforFullParking() {
 		if (floors.size() == 0 || (freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount) == 0) {
 			displayBoard.displayParkingFullMessage();
@@ -142,6 +145,7 @@ public class ParkingLot {
 		return false;
 	}
 
+	// add vehicle to spot
 	public boolean assignVehicleToSpot(Vehicle vehicle) {
 		ParkingSpot spot = null;
 
@@ -159,6 +163,7 @@ public class ParkingLot {
 		return false;
 	}
 
+	// remove vehicle from spot
 	public boolean removeVehicleFromSpot(int spotNo, String vehicleNumber) {
 		ParkingSpot spot = null;
 
@@ -186,6 +191,7 @@ public class ParkingLot {
 		return false;
 	}
 
+	// update vacant spot count when removing vehicle
 	private void updateSpotCountAfterRemovingVehicle(VehicleType type) {
 		if (type == VehicleType.BIKE) {
 			freeBikeSpotCount++;
@@ -198,6 +204,7 @@ public class ParkingLot {
 		}
 	}
 
+	// update vacant spot count when adding vehicle
 	private void updateSpotCountAfterAddingVehicle(VehicleType type) {
 		if (type == VehicleType.BIKE) {
 			freeBikeSpotCount--;

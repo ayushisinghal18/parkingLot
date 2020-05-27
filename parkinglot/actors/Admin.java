@@ -36,6 +36,7 @@ public class Admin extends Account {
 		return password;
 	}
 
+	// add new parking floor
 	public void addParkingFloor(ParkingFloor floor) {
 		if (admin.getStatus().equals(AccountStatus.ACTIVE)) {
 			if (lot.getFloorsCount() < floorsCount && lot.addParkingFloor(floor)) {
@@ -48,6 +49,7 @@ public class Admin extends Account {
 		}
 	}
 
+	// add new parking spot
 	public void addParkingSpot(int floor, ParkingSpot spot) {
 		if (admin.getStatus().equals(AccountStatus.ACTIVE)) {
 			if (lot.getFloor(floor) != null && lot.getFloor(floor).getSpotsCount() < parkingSpotsCount
@@ -61,6 +63,7 @@ public class Admin extends Account {
 		}
 	}
 
+	// remove parking floor
 	public void removeParkingFloor(int floorNo) {
 		if (admin.getStatus().equals(AccountStatus.ACTIVE)) {
 			if (lot.getFloorsCount() > 0 && lot.removeParkingFloor(floorNo)) {
@@ -73,6 +76,7 @@ public class Admin extends Account {
 		}
 	}
 
+	// remove parking spot
 	public void removeParkingSpot(int floor, int spotNo) {
 		if (admin.getStatus().equals(AccountStatus.ACTIVE)) {
 			if (lot.getFloor(floor) != null && lot.getFloor(floor).getSpotsCount() > 0

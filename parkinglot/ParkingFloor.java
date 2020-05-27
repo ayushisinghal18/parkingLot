@@ -27,6 +27,7 @@ public class ParkingFloor {
 		bigSpots = new HashMap<>();
 	}
 
+	// add new parking spot
 	public boolean addParkingSpot(ParkingSpot spot) {
 
 		switch (spot.getType()) {
@@ -45,6 +46,7 @@ public class ParkingFloor {
 		}
 	}
 
+	// add vehicle to spot
 	public ParkingSpot assignVehicleToSpot(Vehicle vehicle) {
 
 		ParkingSpot spot = getParkingSpotForVehicle(vehicle);
@@ -84,6 +86,7 @@ public class ParkingFloor {
 		this.floorNo = floorNo;
 	}
 
+	// remove vehicle from spot
 	public ParkingSpot removeVehicleFromSpot(int spotNo, String vehicleNumber) {
 		ParkingSpot spot = null;
 		for (Integer num : bikeSpots.keySet()) {
@@ -117,6 +120,7 @@ public class ParkingFloor {
 		return null;
 	}
 
+	// remove parking spot
 	public ParkingSpot removeParkingSpot(int spotNo) {
 		ParkingSpot spot = null;
 
@@ -164,6 +168,7 @@ public class ParkingFloor {
 		return bikeSpots.size() + compactSpots.size() + bigSpots.size();
 	}
 
+	// display new spot for each spot type
 	public ParkingDisplayBoard getDisplayBoard() {
 		ParkingSpot spot = null;
 
@@ -179,14 +184,17 @@ public class ParkingFloor {
 		return displayBoard;
 	}
 
+	// update spots on display board
 	public void updateDisplayBoard() {
 		this.displayBoard.displayVacantSpots();
 	}
 
+	// get count of vacant spots
 	public int getVacantParkingSpotCount() {
 		return freeBikeSpotCount + freeCompactSpotCount + freeBigSpotCount;
 	}
 
+	// get new spot for vehicle
 	private ParkingSpot getParkingSpotForVehicle(Vehicle vehicle) {
 		ParkingSpot spot = null;
 
@@ -208,6 +216,7 @@ public class ParkingFloor {
 		return spot;
 	}
 
+	// make payment at exit
 	private void makePayment(ParkingSpot spot) {
 		Payment payment = new Payment();
 		payment.initTransaction(spot.getVehicle().getTicket(), spot.getType());
@@ -239,5 +248,4 @@ public class ParkingFloor {
 		}
 		return null;
 	}
-
 }
